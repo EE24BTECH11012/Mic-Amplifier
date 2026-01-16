@@ -64,7 +64,8 @@ The amplifier consists of the following major blocks:
 ## Author
 **Bhavanisankar G S**  
 EE24BTECH11012  
-Department of Electrical Engineering  
+Department of Electrical Engineering 
+IIT Hyderabad
 
 ---
 
