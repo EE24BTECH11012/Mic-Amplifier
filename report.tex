@@ -1,0 +1,350 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{circuitikz}
+\usepackage{hyperref}
+
+\title{EE2301 - ELECTRONIC DEVICES AND CIRCUITS LAB \\ FINAL PROJECT \\ MICROPHONE AMPLIFIER WITH CLASS AB DRIVER}
+
+\author{Bhavanisankar G S - EE24BTECH11012}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Audio amplification is a fundamental aspect of analog electronics design. This project aims to construct a functional audio chain that takes a low-level signal from a microphone (or AUX input), amplifies it through a pre-amplifier stage, and drives a load using a Class AB power stage. The design was improved step by step to solve problems such as overheating, distortion when the signal crosses zero, and unwanted noise. The final result is a reliable amplifier that can safely drive an 8-ohm speaker while keeping distortion under control.
+
+\section{Theory of Audio Amplification}
+
+Audio amplification is typically achieved in stages, each designed to solve a specific problem in the signal chain. A practical audio system almost always consists of a \textit{pre-amplifier} followed by a \textit{power amplifier}. This separation improves signal quality, efficiency, and reliability.
+
+\subsection{Audio Pre-Amplifier}
+
+An audio pre-amplifier is the first active stage of amplification. Its primary role is to amplify very small input signals, such as those from microphones or audio sources, to a usable voltage level without significantly increasing noise or distortion.
+
+The pre-amplifier focuses on:
+\begin{itemize}
+    \item High voltage gain
+    \item High input impedance (to avoid loading the source)
+    \item Low noise and faithful signal reproduction
+\end{itemize}
+
+At this stage, the signal is shaped, conditioned, and prepared for further amplification. However, a pre-amplifier cannot deliver sufficient current or power to drive a loudspeaker directly.
+
+\subsection{Power Amplifier Classes}
+
+Power amplifiers are designed to deliver sufficient current and power to low-impedance loads such as speakers. Based on the conduction angle of the output devices, power amplifiers are classified as Class A, Class B, and Class AB.
+
+\subsubsection{Class A Amplifier}
+
+In a Class A amplifier, the active device conducts for the entire $360^\circ$ of the input signal cycle. This results in excellent linearity and minimal distortion.
+
+However, Class A operation suffers from:
+\begin{itemize}
+    \item Very low efficiency
+    \item Continuous power dissipation
+    \item Significant heat generation
+\end{itemize}
+
+As a result, Class A amplifiers are impractical for medium- and high-power audio applications.
+
+\subsubsection{Class B Amplifier}
+
+In a Class B amplifier, two complementary devices are used, each conducting for $180^\circ$ of the signal cycle. This improves efficiency significantly compared to Class A operation.
+
+The main drawback of Class B amplifiers is \textit{crossover distortion}, which occurs near the zero-crossing point when neither device conducts adequately.
+
+\subsubsection{Class AB Amplifier}
+
+Class AB amplification combines the advantages of Class A and Class B operation. Each output device conducts for slightly more than $180^\circ$, ensuring a small overlap around the zero-crossing region.
+
+This results in:
+\begin{itemize}
+    \item Greatly reduced crossover distortion
+    \item Improved efficiency compared to Class A
+    \item Lower thermal stress compared to pure Class A operation
+\end{itemize}
+
+Because of this balance between efficiency and audio fidelity, Class AB amplifiers are widely preferred in audio power amplifier designs.
+
+\subsection{Why Both a Pre-Amplifier and Class AB Power Stage Are Needed}
+
+A single amplifier stage cannot efficiently satisfy all audio requirements. The pre-amplifier and Class AB power amplifier serve complementary roles:
+
+\begin{itemize}
+    \item The pre-amplifier boosts weak audio signals and preserves signal quality.
+    \item The Class AB power amplifier provides the necessary current and power to drive the speaker with low distortion.
+\end{itemize}
+
+Together, they ensure that the audio signal is amplified accurately, efficiently, and with sufficient power to produce clear and undistorted sound from the loudspeaker.
+
+\section{Circuit Description}
+
+The complete audio amplifier consists of two main sections: a transistor-based pre-amplifier and a Class AB power amplifier. Each section performs a distinct function in amplifying the input audio signal.
+
+\subsection{Pre-Amplifier Section}
+
+The pre-amplifier amplifies the low-level input signal before it is fed to the power stage. The input audio signal is first applied through a coupling capacitor ($C_1$), which blocks any DC component from the source.
+
+Transistor $Q_1$ (BC547) operates as the initial amplification stage. Its biasing network sets a stable operating point, allowing small variations in the input signal to be amplified. The amplified signal is further processed by transistor $Q_2$ (BC547), which provides additional voltage gain and improves signal strength.
+
+Capacitors $C_2$ and $C_3$ are used for AC coupling between stages, ensuring that only the audio signal is transferred while DC biasing remains isolated. The output of this section, labeled \textit{Vout\_preamp}, provides sufficient voltage gain to drive the Class AB stage.
+
+\subsection{Class AB Power Amplifier Section}
+
+The Class AB stage is responsible for delivering the required current to drive the loudspeaker. The input from the pre-amplifier is coupled through capacitor $C_4$ to the driver transistor $Q_3$ (2N3904), which prepares the signal for the output stage.
+
+Diodes $D_1$ and $D_2$ provide the necessary biasing voltage between the output transistors, ensuring Class AB operation. This bias keeps both output transistors slightly conducting and minimizes crossover distortion.
+
+The output stage consists of a complementary power-transistor pair: $Q_4$ (TIP41C) for the positive half-cycle and $Q_5$ (TIP42C) for the negative half-cycle. Emitter resistors ($R_{10}$ and $R_{11}$) improve thermal stability and limit excessive current.
+
+\subsection{Output Stage}
+
+The amplified signal is passed to the loudspeaker through the large coupling capacitor $C_5$. This capacitor blocks DC voltage from reaching the speaker while allowing the amplified AC audio signal to pass. The $8\Omega$ speaker converts the electrical signal into sound.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=1\linewidth]{images/circuit_diagram.png}
+    \caption{Circuit diagram}
+    \label{fig:cktdiag}
+\end{figure}
+
+\newpage
+\section{Output}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/output_simulated.png}
+    \caption{Simulated output diagram}
+    \label{fig:output}
+\end{figure}
+
+
+\section{Measured Parameters}
+
+\subsection{Total Harmonic Distortion ( THD )}
+
+Total Harmonic Distortion (THD) is a measure of the distortion introduced by a system when amplifying a signal. It quantifies how much the output waveform deviates from an ideal sinusoid due to the presence of harmonic frequency components generated by non-linearities in the circuit.
+
+When a pure sinusoidal signal of frequency $f_1$ is applied to an amplifier, an ideal system would produce an output containing only the same frequency. In practical amplifiers, additional frequency components appear at integer multiples of the fundamental frequency, known as harmonics ($2f_1, 3f_1, \ldots$). THD expresses the combined effect of these harmonics relative to the fundamental component.
+
+\subsubsection{Mathematical Definition}
+
+THD is defined as the ratio of the root-mean-square (RMS) value of all harmonic components to the RMS value of the fundamental frequency component:
+\[
+\text{THD} = \frac{\sqrt{V_2^2 + V_3^2 + \cdots + V_n^2}}{V_1},
+\]
+where $V_1$ is the RMS voltage of the fundamental component and $V_2, V_3, \ldots, V_n$ are the RMS voltages of the higher-order harmonics.
+
+THD is commonly expressed as a percentage:
+\[
+\text{THD}(\%) = \frac{\sqrt{V_2^2 + V_3^2 + \cdots + V_n^2}}{V_1} \times 100.
+\]
+
+\subsubsection{Calculated THD}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/THD_2.png}
+        \caption{Calculating the peak value}
+        \label{fig:image1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/THD1.png}
+        \caption{Second harmonic}
+        \label{fig:image2}
+    \end{subfigure}
+    \caption{THD}
+    \label{fig:thd}
+\end{figure}
+
+We apply the FFT option present in the oscilloscope to look at the harmonics, and use the cursors and measure options to measure their value. The calculated THD becomes, 
+\begin{align*}
+    THD &\approx \frac{V_2}{V_1} \\ &= \frac{80}{2300} = 0.034
+\end{align*}
+
+\subsection{Noise in Audio Amplifiers}
+
+Noise refers to unwanted random signals that are superimposed on the desired audio signal and degrade the overall sound quality. In audio amplifiers, noise limits the smallest signal that can be amplified clearly and directly affects the signal-to-noise ratio (SNR) of the system.
+
+Common sources of noise in audio circuits include thermal noise generated by resistors, shot noise in semiconductor devices, power supply ripple, and external electromagnetic interference. These noise components are generally random in nature and spread over a wide range of frequencies.
+
+\subsubsection{Noise Measurement}
+
+Noise is typically quantified as the root-mean-square (RMS) value of the unwanted voltage or current measured at the output of the amplifier in the absence of an input signal. For voltage noise, it is expressed as:
+\[
+V_{\text{noise}} = \sqrt{\frac{1}{T}\int_{0}^{T} v_n^2(t)\, dt},
+\]
+where $v_n(t)$ is the instantaneous noise voltage and $T$ is the observation time.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/noise.png}
+    \caption{Measuring Noise}
+    \label{fig:noise}
+\end{figure}
+
+From the diagram, the RMS value of noise is 34.8 mV .
+
+\subsubsection{Signal-to-Noise Ratio (SNR)}
+
+The effect of noise is commonly evaluated using the Signal-to-Noise Ratio (SNR), defined as the ratio of the RMS signal voltage to the RMS noise voltage:
+\[
+\text{SNR} = \frac{V_{\text{signal}}}{V_{\text{noise}}}.
+\]
+
+SNR is usually expressed in decibels (dB):
+\[
+\text{SNR}_{\text{dB}} = 20\log_{10}\left(\frac{V_{\text{signal}}}{V_{\text{noise}}}\right).
+\]
+
+From the output diagram, it can be seen that 
+
+\begin{align*}
+    V_{signal} &= 1.5 V \\
+    V_{noise} &= 34.8 mV \\
+    \implies SNR &= 20 \log_{10} \left( \frac{V_{signal}}{V_{noise}} \right) \\
+    &= 20 \log_{10} \left( \frac{1500}{34.8} \right) \approx 33 \text{dB} 
+\end{align*}
+
+\newpage
+
+\subsection{Power Supply Rejection Ratio (PSRR)}
+
+Power Supply Rejection Ratio (PSRR) indicates how effectively an amplifier suppresses variations or noise present on its power supply from appearing at the output.
+
+\subsubsection{Measurement Method}
+
+To measure PSRR, the input of the amplifier is grounded and a small AC voltage is superimposed on the DC supply. Any resulting AC component at the output is due to power supply coupling.
+
+\subsubsection{Calculation}
+
+PSRR is defined as the ratio of the applied supply ripple to the resulting output ripple:
+\[
+\text{PSRR} = \frac{\Delta V_{\text{supply}}}{\Delta V_{\text{out}}}
+\]
+and is usually expressed in decibels as:
+\[
+\text{PSRR}_{\text{dB}} = 20\log_{10}\left(\frac{\Delta V_{\text{supply}}}{\Delta V_{\text{out}}}\right).
+\]
+
+\begin{figure}[!ht]
+\centering
+\resizebox{0.5\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\normalsize]
+\draw (6.25,16.5) to[american voltage source] (3.5,16.5);
+\draw (6.25,14.75) to[sinusoidal voltage source, sources/symbol/rotate=auto] (3.5,14.75);
+\draw (5.5,16.5) to[L ] (7.75,16.5);
+\draw (5.5,14.75) to[C] (7.75,14.75);
+\draw (7.75,16.5) to[short] (7.75,14.75);
+\draw [->, >=Stealth] (7.75,15.5) -- (8.5,15.5);
+\draw (3.5,16.5) to[short] (3.5,14.75);
+\draw (3.5,15.75) to (3.25,15.75) node[sground]{};
+\node [font=\normalsize] at (5,17.25) {$V_{DC}$};
+\node [font=\normalsize] at (4.75,15.5) {$V_{AC}$};
+\node [font=\normalsize] at (6.75,17) {1 mH};
+\node [font=\normalsize] at (6.5,15.5) {100 uF};
+\node [font=\normalsize] at (8.25,16) {$V_{CC}$};
+\end{circuitikz}
+}%
+\caption{AC ripple injection network for PSRR measurement. The inductor isolates the DC source from AC components, while the capacitor blocks DC and injects AC ripple at the supply node.}
+\label{fig:connect}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/PSRR.png}
+    \caption{Calculated PSRR value}
+    \label{fig:psrr}
+\end{figure}
+
+A 10 mV AC ripple is given.
+
+\begin{align*}
+    PSRR &= 20 \log_{10} \left( \frac{800}{10} \right) \\
+    &= 38 dB
+\end{align*}
+
+\subsection{Quiescent Current}
+
+Quiescent current ($I_Q$) is the small current that flows through an amplifier when no input signal is applied. It sets the operating point of the active devices and ensures that the amplifier operates in its linear region.
+
+In a Class AB amplifier, the quiescent current keeps both output transistors slightly conducting around the zero-crossing region. This reduces crossover distortion while maintaining much higher efficiency than Class A operation.
+
+From the diagram, it can be seen that the Quiescent current, $I_{Q}$ is 22 mA.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/iq.png}
+    \caption{Calculation of Quiescent current}
+    \label{fig:iq}
+\end{figure}
+
+\subsection{Gain}
+
+Gain represents the factor by which an amplifier increases the amplitude of an input signal. In audio amplifiers, voltage gain is of primary interest and is defined as:
+\[
+A_v = \frac{V_{out}}{V_{in}}
+\]
+
+Gain is often expressed in decibels (dB):
+\[
+A_v(\text{dB}) = 20 \log_{10}\!\left(\frac{V_{out}}{V_{in}}\right)
+\]
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/gain_bandwidth.png}
+    \caption{Bode plots to calculate gain and bandwidth}
+    \label{fig:gain}
+\end{figure}
+
+From the graph, the gain can be seen to be around 97-98 ( $\approx 40 $ dB) .
+
+\subsection{Bandwidth}
+
+Bandwidth is the range of frequencies over which the amplifier maintains an approximately constant gain. It is defined by the lower and upper cutoff frequencies, $f_L$ and $f_H$, where the gain falls by $3\,\text{dB}$ from its mid-band value.
+
+\[
+\text{Bandwidth (BW)} = f_H - f_L
+\]
+
+From the graph, it can be seen that the bandwidth is approximately 20 Hz to 1 MHz .
+
+\subsection{Output Swing and Output Power}
+
+Output swing and output power describe the maximum signal level an amplifier can deliver to a load without distortion or clipping. 
+
+Output swing is the maximum peak-to-peak voltage that appears at the amplifier output while remaining within the linear operating region. It is limited by the supply voltage and the voltage drops across the output devices.
+
+Output power is the average power delivered to the load .
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/os_op.png}
+    \caption{Calculating output swing and output power - It can be seen that the output waveform gets clipped}
+    \label{fig:osop}
+\end{figure}
+
+From the diagram it can be seen that the output swing is 90 mV. Hence the output power is $\frac{0.09 * 0.09}{2 \times 8} \approx 0.5 mW $
+
+\section{Conclusion}
+
+A microphone amplifier using a voltage pre-amplifier and a Class AB power stage was successfully designed and analyzed. The circuit amplifies a low-level microphone signal and drives an $8\,\Omega$ load with stable operation and controlled distortion. The required parameters are measured, and compared with those of commercial amplifiers.
+
+\section{Circuit diagram credits}
+
+\begin{itemize}
+    \item Pre-amplifier - \href{https://sound-au.com/project13.htm}{https://sound-au.com/project13.htm}
+    \item Power amplifier - \href{https://www.electronics-tutorials.ws/amplifier/class-ab-amplifier.html}{https://www.electronics-tutorials.ws/amplifier/class-ab-amplifier.html}
+\end{itemize}
+
+\end{document}
+
